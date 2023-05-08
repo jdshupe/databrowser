@@ -1,0 +1,65 @@
+[
+	"type": "menu",
+	"name": "Main Menu",
+	"options": [
+		{
+			"type": "menu",
+			"name": "Search",
+			"options": [
+				{
+					"type": "menu",
+					"name": "Person",
+					"options": [
+						{
+							"type": "lookup",
+							"name": "First Name",
+							"arguments": [
+								"first name"
+							],
+							"query": "SELECT personfirstname, personlastname, personcellphone FROM personnel WHERE personfirstname LIKE ?"
+						},
+						{
+							"type": "lookup",
+							"name": "Last Name",
+							"arguments": [
+								"last name"
+							],
+							"query": "SELECT personfirstname, personlastname, personcellphone FROM personnel WHERE personlastname LIKE ?"
+						},
+						{
+							"type": "lookup",
+							"name": "Phone Number",
+							"arguments": [
+								"phone number"
+							],
+							"query": "SELECT personfirstname, personlastname, personcellphone FROM personnel WHERE personcellphone LIKE ?"
+						}
+					]
+				},
+				{
+					"type": "menu",
+					"name": "Company",
+					"options": [
+
+					]
+				}
+
+			]
+		},
+		{
+			"type": "menu",
+			"name": "Add",
+			"options": [
+
+			]
+		},
+		{
+			"type": "menu",
+			"name": "Update Entry",
+			"options": [
+
+			]
+		}
+
+	]
+]
