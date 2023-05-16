@@ -191,13 +191,17 @@ def browse_menu():
 def browse_personnel():
 	# Get a list of all personnel and convert into a list for menu options
 	cur.execute("""
-				SELECT personfirstname || ' ' || personlastname as personname 
+				SELECT 
+					personfirstname || ' ' || personlastname as personname,
+					personjobtitle
 				FROM personnel
 			 	ORDER BY personname ASC""")
-	person_names = [x[0] for x in cur.fetchall()]
+	person_names = ["|{0:<15}\|{1:<25}\|".format(x[0][:15], str(x[1])[:25]) for x in cur.fetchall()]
 	person_names.extend(["", "[q]Back to Main Menu|Does this show up?"])
 
-	browse_menu_title = "Procurement Database/Browse/People"
+	browse_menu_title = "Procurement Database/Browse/People\n      "+ \
+			"|{0:^15}|{1:^25}|".format("Name","Title") + "\n" + \
+			"      |{:-<15}|{:-<25}|".format("","")
 	browse_menu_cursor = "> "
 	browse_menu_cursor_style = ("fg_red", "bold")
 	browse_menu_style = ("bg_red", "fg_yellow")
@@ -212,9 +216,9 @@ def browse_personnel():
 		cycle_cursor=True,
 		clear_screen=True,
 		skip_empty_entries=True,
-		preview_command=get_user_data,
-		preview_size=0.25,
-		preview_title="Contact information",
+		#preview_command=get_user_data,
+		#preview_size=0.25,
+		#preview_title="Contact information",
 		show_shortcut_hints=True,
 		status_bar_below_preview=True,
 		show_search_hint=True
