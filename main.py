@@ -193,15 +193,33 @@ def browse_personnel():
 	cur.execute("""
 				SELECT 
 					personfirstname || ' ' || personlastname as personname,
-					personjobtitle
+					personjobtitle,
+					"("||substr(personcellphone,1,3)||")"
+					||substr(personcellphone,4,3)||"-"
+					||substr(personcellphone,7,4) as cellphone,
+					personemail
 				FROM personnel
 			 	ORDER BY personname ASC""")
-	person_names = ["|{0:<15}\|{1:<25}\|".format(x[0][:15], str(x[1])[:25]) for x in cur.fetchall()]
-	person_names.extend(["", "[q]Back to Main Menu|Does this show up?"])
 
-	browse_menu_title = "Procurement Database/Browse/People\n      "+ \
-			"|{0:^15}|{1:^25}|".format("Name","Title") + "\n" + \
-			"      |{:-<15}|{:-<25}|".format("","")
+	# format the data into the display string
+	person_names = [ \
+			"|{0:<15}\|{1:<25}\|{2:<13}\|{3:<30}\|".format(
+				x[0][:15], # name (Limited to 15)
+				str(x[1])[:25], # job title (Limited to 25)
+				str(x[2]), # Cell Phone
+				str(x[3])[:30] # email (Limited to 30)
+			) for x in cur.fetchall()]
+	# Add the quit option to the list of data
+	person_names.extend(["", "[q]Back to Main Menu"])
+
+	# format the title string with column titles and widths
+	main_title = "Procurement Database/Browse/People\n"
+	column_headers = "{0: <6}|{1:^15}|{2:^25}|{3:^13}|{4:30}|\n".format(
+				"","Name","Title","Cell Phone","Email")
+	divider_row = "{: <6}|{:-<15}|{:-<25}|{:-<13}|{:-<30}|".format(
+					"","","","","")
+	browse_menu_title = main_title + column_headers + divider_row
+
 	browse_menu_cursor = "> "
 	browse_menu_cursor_style = ("fg_red", "bold")
 	browse_menu_style = ("bg_red", "fg_yellow")
