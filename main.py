@@ -326,7 +326,7 @@ def get_company_data(company_name):
 # Add menu and sub functions
 def add_menu():
 	add_menu_title = "Procurement Database/Add"
-	add_menu_items = ["[p]Person", "[c]Company", "[o]Office", "", "[q]Back to Main Menu"]
+	add_menu_items = ["[p]Person", "[c]Company", "[o]Office", "[j]Job", "", "[q]Back to Main Menu"]
 	add_menu_cursor = "> "
 	add_menu_cursor_style = ("fg_red", "bold")
 	add_menu_style = ("bg_red", "fg_yellow")
@@ -352,7 +352,9 @@ def add_menu():
 			add_company()
 		elif add_sel == 2:
 			add_office()
-		elif add_sel == 4 or add_sel == None:
+		elif add_sel == 3:
+			add_job()
+		elif add_sel == 5 or add_sel == None:
 			add_menu_back = True
 			print("Back Selected")
 
@@ -447,6 +449,43 @@ def add_office():
 		else:
 			return
 	cur.execute("INSERT INTO offices(officestreetaddress, officecity, officestate, officephone, officecompany) VALUES(?,?,?,?, (SELECT companyid FROM companies WHERE companyname = ?))", [street_address, city, state, phone, company_name])
+	con.commit()
+def add_job():
+	print("Procurement Database/Add/Job")
+	confirmed = False
+	while not confirmed:
+		job_name = input("Job Name? ")
+		job_number = input("Job number? ")
+		
+		# Check to see if there are any records matching the name
+		cur.execute("SELECT * FROM jobs WHERE jobnumber LIKE ?", [job_number])
+		# checks to see if any where returned
+		if cur.fetchall():
+			print("A record already exists for this job, are you sure you want to add?: ")
+			check_value = input("y/n ")
+			if check_value == "n":
+				return # breaks is the user types 'n'
+
+		street_address = input("Street Address? ")
+		city = input("City? ")
+		state = input("State? ")
+
+		# final check to make sure all info was added correctly and gives a chance to cancel.
+		print(('Do you want to add {} - {}\n'
+				'Street Address: {}\n'
+				'City, State: {}, {}\n'
+				'to the database?' ) \
+			.format(job_number, job_name, street_address, city, state))
+		check_value = input("y/n ")
+		if check_value == "y":
+			confirmed = True
+		elif check_value == "n":
+			return
+		else:
+			return
+	cur.execute("INSERT INTO jobs(jobname, jobnumber, jobstreetaddress, city, \
+			 state ) VALUES(?,?,?,?,?)", [job_name, job_number, street_address, \
+								 city, state])
 	con.commit()
 
 # Build main menu
