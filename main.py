@@ -210,7 +210,7 @@ def browse_personnel():
 				str(x[3])[:30] # email (Limited to 30)
 			) for x in cur.fetchall()]
 	# Add the quit option to the list of data
-	person_names.extend(["", "[q]Back to Main Menu"])
+	person_names.extend(["", "[q]Back to Main Menu", "[a]Add"])
 
 	# format the title string with column titles and widths
 	main_title = "Procurement Database/Browse/People\n"
@@ -225,6 +225,7 @@ def browse_personnel():
 	browse_menu_style = ("bg_red", "fg_yellow")
 	browse_menu_back = False
 
+	# create the menu
 	browse_menu = TerminalMenu(
 		person_names,
 		title=browse_menu_title,
@@ -234,29 +235,23 @@ def browse_personnel():
 		cycle_cursor=True,
 		clear_screen=True,
 		skip_empty_entries=True,
-		#preview_command=get_user_data,
-		#preview_size=0.25,
-		#preview_title="Contact information",
 		show_shortcut_hints=True,
 		status_bar_below_preview=True,
 		show_search_hint=True
 	)
 
+	# keep showing the menu as long as "back" is not selected
 	while not browse_menu_back:
+		# display the menu
 		browse_sel = browse_menu.show()
-	
-		if browse_sel == len(person_names) - 1:
+		
+		# handle option selection
+		if browse_sel == len(person_names) - 2:
 			browse_menu_back = True;
-
-def get_user_data(user_name):
-	cur.execute("""
-		SELECT 
-			personfirstname || ' ' || personlastname AS personname, 
-			SUBSTR(personcellphone,1,3) || '-' || SUBSTR(personcellphone,4,3) || '-' || SUBSTR(personcellphone,7,4) as personphone, 
-			personemail
-		FROM personnel
-		WHERE personname = '""" + user_name + "'")
-	return tabulate(cur.fetchall(), headers=["Name", "Cell Phone","Email"])
+		if browse_sel == len(person_names) - 1:
+			add_person();
+		else:
+			print(browse_sel);
 
 # Get a list of all personnel and convert into a list for menu options
 def browse_companies():
@@ -265,7 +260,7 @@ def browse_companies():
 				FROM companies
 			 	ORDER BY companyname ASC""")
 	company_names = [x[0] for x in cur.fetchall()]
-	company_names.extend(["", "[q]Back to Main Menu"])
+	company_names.extend(["", "[q]Back to Main Menu", "[a]Add"])
 
 	browse_menu_title = "Procurement Database/Browse/Compaies"
 	browse_menu_cursor = "> "
@@ -293,9 +288,10 @@ def browse_companies():
 	while not browse_menu_back:
 		browse_sel = browse_menu.show()
 	
-		if browse_sel == len(company_names) - 1:
+		if browse_sel == len(company_names) - 2:
 			browse_menu_back = True;
-
+		if browse_sel == len(company_names) - 1:
+			add_company();
 # Get a list of companies matching the company_name
 def get_company_data(company_name):
 	offices_query = """
